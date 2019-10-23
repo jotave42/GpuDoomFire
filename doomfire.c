@@ -42,7 +42,7 @@ void printMatOpenGL(int** mat,int elem){
         for (int j = 0; j < elem; j++){
             int num =mat[i][j];
             if(num>10)
-                glVertex2i(i, j);
+                glVertex2i(i * 5, j * 5);
             
         }
     }
@@ -137,7 +137,7 @@ void display (void)
     //glClear(GL_COLOR_BUFFER_BIT); 
     //glBegin(GL_POINTS); 
     
-    int elem = 40;
+    int elem = 400;
     int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
     for (int i = 0; i < elem; i++)
         fireStruct[i] = (int *) malloc(sizeof(int)*elem);
