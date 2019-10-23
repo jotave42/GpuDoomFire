@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+
+
+void prinrtMat(int** mat,int elem){
+    for (int i = 0; i < elem; i++){
+        printf("[ ");
+        for (int j = 0; j < elem; j++)
+            printf("%d ",mat[i][j]);
+        printf("]\n");
+    }
+}
+
+void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY){
+    int belowPosY = posY;
+    if(posY<tam-1)
+        belowPosY++;
+    int decay = rand() % 3;
+    
+    int decayPosY = rand() % 3;
+    int belowPixelFireIntensity = mat[posX][belowPosY];
+    int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
+
+    printf("mat[%d][%d]=%d\n",posX,belowPosY,newFireIntensity);
+    mat[posX][belowPosY]=newFireIntensity;
+
+}
+void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
+    int belowPosX = posX+1;
+    if(belowPosX == elem-1);
+        belowPosX = posX;
+    int belowPosY = posY;
+    int decay = rand() % 3;
+    //printf("decay -> %d\n",decay);
+    
+    int decayPosX = rand() % 3;
+    int decayPosY = rand() % 3;
+    //printf("decayPosX -> %d\n",decayPosX);
+    //printf("decayPosY -> %d\n",decayPosY);
+    int belowPixelFireIntensity = mat[belowPosX][belowPosY];
+    int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
+
+    int newPosX = belowPosX + decayPosX < elem ? belowPosX + decayPosX: belowPosX;
+    int newPosY = 0;
+    if(newPosY+decayPosY< elem){
+        newPosY =newPosY+decayPosY;
+    }else{
+        if(newPosX +1 <elem-2){
+            newPosX++;
+            newPosY =newPosY+decayPosY;
+        }
+        else
+            newPosY =elem-1;
+    }
+    printf("mat[%d][%d]=%d\n",newPosX,newPosY,newFireIntensity);
+    if(newPosX<elem-1);
+        mat[newPosX][newPosY]=newFireIntensity;
+
+}
+void calculeteFirePropagation(int** mat,int elem){
+    for (int i = elem-2; i >=0; i--)
+        for (int j = 0; j < elem; j++){
+            updateFireIntensityPerPixelSimple(mat,elem ,i, j);
+        }
+
+}
+void creatFireSource(int** mat,int elem){
+    int lestLine =elem-1;
+    for (int j = 0; j < elem; j++)
+        mat[lestLine][j]= 36;
+}
+int loadFireStruct(int** mat,int elem){
+    for (int i = 0; i < elem; i++)
+        for (int j = 0; j < elem; j++)
+            mat[i][j]=0;
+    
+    return 0;
+}
+
+int main(int argc, char *argv[]){
+    int elem = 10;
+    int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
+    for (int i = 0; i < elem; i++)
+        fireStruct[i] = (int *) malloc(sizeof(int)*elem);
+    
+    while (1){
+        loadFireStruct(fireStruct,elem);
+        creatFireSource(fireStruct,elem);
+        calculeteFirePropagation(fireStruct,elem);
+        printf("=================\n");
+        prinrtMat(fireStruct,elem);
+        break;
+        sleep(1);
+    }
+    return 0;
+}
