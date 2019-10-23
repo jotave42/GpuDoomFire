@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
-#include <unistd.h>
 
 void prinrtMat(int** mat,int elem){
     for (int i = 0; i < elem; i++){
@@ -112,7 +111,7 @@ int main(int argc, char *argv[]){
         calculeteFirePropagation(fireStruct,elem);
         printf("=================\n");
         prinrtMat(fireStruct,elem);
-        usleep(300);
+        sleep(1);
     }
     return 0;
 }
