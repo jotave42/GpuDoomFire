@@ -180,7 +180,7 @@ int main (int argc, char** argv)
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); 
       
     // giving window size in X- and Y- direction 
-    glutInitWindowSize(1366, 768); 
+    glutInitWindowSize(400, 300); 
     glutInitWindowPosition(0, 0); 
       
     // Giving name to window 
