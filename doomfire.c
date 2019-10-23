@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
-
+#include <unistd.h>
 
 void prinrtMat(int** mat,int elem){
     for (int i = 0; i < elem; i++){
@@ -19,14 +19,31 @@ void prinrtMat(int** mat,int elem){
 }
 
 void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY){
-    int belowPosx = posX;
+    int belowPosX = posX;
     if(posX<tam-1)
-        belowPosx++;
+        belowPosX++;
     int decay = rand() % 3;
-    
-    int decayPosX = rand() % 3;
 
-    int belowPixelFireIntensity = mat[belowPosx][posY];
+    int decayPosY = rand() % 5 + (-2);//random number between -3 and 3
+    
+    int belowPosY = posY + decayPosY;
+    if(belowPosY<0){
+        if(posX>0){
+            posX --;
+            belowPosY = tam-1+belowPosY;
+   //         printf("newPosY %d\n", belowPosY);
+        }else
+            belowPosY=0;
+    }else if(belowPosY>tam-1){
+        if(posX<tam-1){
+            posX ++;
+            belowPosY = belowPosY -tam-1;
+        //    printf("newPosY %d\n", belowPosY);
+        }else
+            belowPosY =tam-1;
+        
+    }
+    int belowPixelFireIntensity = mat[belowPosX][belowPosY];
     int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
 
     mat[posX][posY]=newFireIntensity;
@@ -89,14 +106,13 @@ int main(int argc, char *argv[]){
     int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
     for (int i = 0; i < elem; i++)
         fireStruct[i] = (int *) malloc(sizeof(int)*elem);
-    
     while (1){
         loadFireStruct(fireStruct,elem);
         creatFireSource(fireStruct,elem);
         calculeteFirePropagation(fireStruct,elem);
         printf("=================\n");
         prinrtMat(fireStruct,elem);
-        sleep(1);
+        usleep(300);
     }
     return 0;
 }
