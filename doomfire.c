@@ -7,24 +7,29 @@
 void prinrtMat(int** mat,int elem){
     for (int i = 0; i < elem; i++){
         printf("[ ");
-        for (int j = 0; j < elem; j++)
-            printf("%d ",mat[i][j]);
+        for (int j = 0; j < elem; j++){
+            int num =mat[i][j];
+            if(num<10)
+                printf("0%d ",num);
+            else
+                printf("%d ",num);
+        }
         printf("]\n");
     }
 }
 
 void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY){
-    int belowPosY = posY;
-    if(posY<tam-1)
-        belowPosY++;
+    int belowPosx = posX;
+    if(posX<tam-1)
+        belowPosx++;
     int decay = rand() % 3;
     
-    int decayPosY = rand() % 3;
-    int belowPixelFireIntensity = mat[posX][belowPosY];
+    int decayPosX = rand() % 3;
+
+    int belowPixelFireIntensity = mat[belowPosx][posY];
     int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
 
-    printf("mat[%d][%d]=%d\n",posX,belowPosY,newFireIntensity);
-    mat[posX][belowPosY]=newFireIntensity;
+    mat[posX][posY]=newFireIntensity;
 
 }
 void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
@@ -60,11 +65,11 @@ void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
 
 }
 void calculeteFirePropagation(int** mat,int elem){
-    for (int i = elem-2; i >=0; i--)
+    for (int i = elem-2; i >=0; i--){
         for (int j = 0; j < elem; j++){
             updateFireIntensityPerPixelSimple(mat,elem ,i, j);
         }
-
+    }
 }
 void creatFireSource(int** mat,int elem){
     int lestLine =elem-1;
@@ -80,7 +85,7 @@ int loadFireStruct(int** mat,int elem){
 }
 
 int main(int argc, char *argv[]){
-    int elem = 10;
+    int elem = 40;
     int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
     for (int i = 0; i < elem; i++)
         fireStruct[i] = (int *) malloc(sizeof(int)*elem);
@@ -91,7 +96,6 @@ int main(int argc, char *argv[]){
         calculeteFirePropagation(fireStruct,elem);
         printf("=================\n");
         prinrtMat(fireStruct,elem);
-        break;
         sleep(1);
     }
     return 0;
