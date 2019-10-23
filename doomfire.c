@@ -41,10 +41,9 @@ void printMatOpenGL(int** mat,int elem){
     for (int i = 0; i < elem; i++){
         for (int j = 0; j < elem; j++){
             int num =mat[i][j];
-            if(num<10)
-                //printf("0%d ",num);
-            else
+            if(num>10)
                 glVertex2i(i, j);
+            
         }
     }
 }
@@ -147,7 +146,7 @@ void display (void)
     loadFireStruct(fireStruct,elem);
     creatFireSource(fireStruct,elem);
     calculeteFirePropagation(fireStruct,elem);
-    printMatOpenGL(fireStruct,elem)
+    printMatOpenGL(fireStruct,elem);
     //printf("=================\n");
     //prinrtMat(fireStruct,elem);
     //sleep(1);
