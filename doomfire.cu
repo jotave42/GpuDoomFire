@@ -182,18 +182,22 @@ int main(int argc, char *argv[])
     int size = elem * elem * sizeof(int);
 
     int ** fireStruct;
-    checkCuda(cudaMallocManaged (&fireStruct, size));
+    printf("fazendo malloc ...\n");
+    checkCuda(cudaMallocManaged(&fireStruct, size));
     
+    printf("fazendo chaamando loadFireStruct ...\n");
     loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
     checkCuda(cudaGetLastError());
     checkCuda(cudaDeviceSynchronize());
 
+    printf("fazendo chamando creatFireSource ...\n");
     creatFireSource<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
     checkCuda(cudaGetLastError() );
     checkCuda(cudaDeviceSynchronize());
 
     while (1)
     {
+        printf("fazendo chamando calculeteFirePropagation ...\n");
         calculeteFirePropagation<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
         checkCuda(cudaGetLastError() );
         checkCuda(cudaDeviceSynchronize());
@@ -202,7 +206,7 @@ int main(int argc, char *argv[])
         prinrtMat(fireStruct,elem);
         //sleep(1);
     }
-
+    printf("fazendo chamando cudaFree ...\n");
     checkCuda(cudaFree(fireStruct));
 
     return 0;
