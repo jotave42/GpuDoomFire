@@ -21,7 +21,7 @@ void prinrtMat(int** mat,int elem)
     }
 }
 
-__global__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY)
+__device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY)
 {
     int belowPosX = posX;
     int decay = rand() % 3;
