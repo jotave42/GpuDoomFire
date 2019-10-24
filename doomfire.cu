@@ -2,8 +2,18 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
-#include  <cuda.h>
-#include  <curand_kernel.h>
+#include <cuda.h>
+#include <curand_kernel.h>
+#include <assert.h>
+
+inline cudaError_t checkCuda(cudaError_t result)
+{
+  if (result != cudaSuccess) {
+    printf("CUDA Runtime Error: %s\n", cudaGetErrorString(result));
+    assert(result == cudaSuccess);
+  }
+  return result;
+}
 
 void prinrtMat(int** mat,int elem)
 {
@@ -171,25 +181,28 @@ int main(int argc, char *argv[])
     int size = elem * elem * sizeof(int);
 
     int ** fireStruct;
-    cudaMallocManaged (&fireStruct, size);
+    checkCuda(cudaMallocManaged (&fireStruct, size));
     
     loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
-    cudaDeviceSynchronize();
+    checkCuda(cudaGetLastError());
+    checkCuda(cudaDeviceSynchronize());
 
     creatFireSource<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
-    cudaDeviceSynchronize();
+    checkCuda(cudaGetLastError() );
+    checkCuda(cudaDeviceSynchronize());
 
     while (1)
     {
         calculeteFirePropagation<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
-        cudaDeviceSynchronize();
+        checkCuda(cudaGetLastError() );
+        checkCuda(cudaDeviceSynchronize());
 
         printf("=================\n");
         prinrtMat(fireStruct,elem);
         //sleep(1);
     }
 
-    cudaFree(fireStruct);
+    checkCuda(cudaFree(fireStruct));
 
     return 0;
 }
