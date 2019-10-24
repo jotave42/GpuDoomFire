@@ -98,8 +98,11 @@ void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
 
 __global__ void calculeteFirePropagation(int ** mat,int elem)
 {
-    int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = blockDim.x * gridDim.x;
+    int index_x = threadIdx.x + blockIdx.x * blockDim.x;
+    int stride_x = blockDim.x * gridDim.x;
+
+    int index_y = threadIdx.y + blockIdx.y * blockDim.y;
+    int stride_y = blockDim.y * gridDim.y;
 
     for (int i = elem - 2; i >= 0; i--)
     {
@@ -112,8 +115,8 @@ __global__ void calculeteFirePropagation(int ** mat,int elem)
 
 __global__ void creatFireSource(int** mat,int elem)
 {
-    int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = blockDim.x * gridDim.x;
+    int index = threadIdx.y + blockIdx.y * blockDim.y;
+    int stride = blockDim.y * gridDim.y;
 
     int lestLine = elem - 1;
     
@@ -125,12 +128,15 @@ __global__ void creatFireSource(int** mat,int elem)
 
 __global__ void loadFireStruct(int** mat,int elem)
 {
-    int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = blockDim.x * gridDim.x;
+    int index_x = threadIdx.x + blockIdx.x * blockDim.x;
+    int stride_x = blockDim.x * gridDim.x;
 
-    for (int i = index; i < elem; i += stride)
+    int index_y = threadIdx.y + blockIdx.y * blockDim.y;
+    int stride_y = blockDim.y * gridDim.y;
+
+    for (int i = index_x; i < elem; i += stride_x)
     {
-        for (int j = index; j < elem; j += stride)
+        for (int j = index_y; j < elem; j += stride_y)
         {
             mat[i][j]=0;
         }
