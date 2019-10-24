@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
         checkCuda(cudaDeviceSynchronize());
 
         printf("=================\n");
-        prinrtMat(fireStruct,elem);
+       // prinrtMat(fireStruct,elem);
         //sleep(1);
     }
     printf("fazendo chamando cudaFree ...\n");
