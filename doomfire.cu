@@ -26,11 +26,11 @@ __device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, i
     int belowPosX = posX;
     //int decay = rand() % 3;
     //int decayPosY = rand() % 5 + (-2); //random number between -3 and 3
-    int belowPosY = posY + decayPosY;
+    //int belowPosY = posY + decayPosY;
     
     curandState state;
 
-    curand_init(seed, index, 0, &state);
+    curand_init(1234, index, 0, &state);
     float res = curand_uniform(&state);
     printf("res = %f\n",res);
     return;
