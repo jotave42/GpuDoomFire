@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include  <cuda.h>
+#include  <curand_kernel.h>
 
 void prinrtMat(int** mat,int elem)
 {
