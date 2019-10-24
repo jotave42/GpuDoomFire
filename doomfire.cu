@@ -117,7 +117,7 @@ void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
 }
 
 __global__ void calculeteFirePropagation(int** mat,int elem)
-{
+{/*
     int index_x = threadIdx.x + blockIdx.x * blockDim.x;
     int stride_x = blockDim.x * gridDim.x;
 
@@ -130,11 +130,11 @@ __global__ void calculeteFirePropagation(int** mat,int elem)
         {
             updateFireIntensityPerPixelSimple(mat,elem ,i, j, index_x);
         }
-    }
+    }*/
 }
 
 __global__ void creatFireSource(int** mat,int elem)
-{
+{/*
     int index = threadIdx.y + blockIdx.y * blockDim.y;
     int stride = blockDim.y * gridDim.y;
 
@@ -143,12 +143,12 @@ __global__ void creatFireSource(int** mat,int elem)
     for (int j = index; j < elem; j += stride)
     {
         mat[lestLine][j]= 36;
-    }
+    }*/
 }
 
 __global__ void loadFireStruct(int** mat,int elem)
 {
-    int index_x = threadIdx.x + blockIdx.x * blockDim.x;
+    /*int index_x = threadIdx.x + blockIdx.x * blockDim.x;
     int stride_x = blockDim.x * gridDim.x;
 
     int index_y = threadIdx.y + blockIdx.y * blockDim.y;
@@ -160,7 +160,7 @@ __global__ void loadFireStruct(int** mat,int elem)
         {
             mat[i][j]=0;
         }
-    }
+    }*/
 }
 
 int main(int argc, char *argv[])
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
     int ** fireStruct;
     printf("fazendo malloc ...\n");
-    checkCuda(cudaMallocManaged((void**)fireStruct, size));
+    checkCuda(cudaMallocManaged(&fireStruct, size));
     
     printf("fazendo chaamando loadFireStruct ...\n");
     loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
