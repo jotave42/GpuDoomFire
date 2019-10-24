@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
     int ** fireStruct;
     printf("fazendo malloc ...\n");
-    checkCuda(cudaMallocManaged((void**)&fireStruct, size));
+    checkCuda(cudaMallocManaged((void**)fireStruct, size));
     
     printf("fazendo chaamando loadFireStruct ...\n");
     loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
