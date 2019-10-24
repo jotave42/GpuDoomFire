@@ -5,6 +5,7 @@
 #include <cuda.h>
 #include <curand_kernel.h>
 #include <assert.h>
+#include <cuda_runtime.h>
 
 inline cudaError_t checkCuda(cudaError_t result)
 {
