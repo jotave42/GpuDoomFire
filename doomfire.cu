@@ -137,12 +137,30 @@ __global__ void loadFireStruct(int** mat,int elem)
     }
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
+    int deviceId;
+    int numberOfSMs;
+
+    cudaGetDevice(&deviceId);
+    cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+
+    size_t threadsPerBlock;
+    size_t numberOfBlocks;
+
+    threadsPerBlock = 256;
+    numberOfBlocks = 32 * numberOfSMs;
+
     int elem = 40;
-    int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
+    int ** fireStruct = (int *) malloc(sizeof(int) *elem *elem);
+    
     for (int i = 0; i < elem; i++)
-        fireStruct[i] = (int *) malloc(sizeof(int)*elem);
-    while (1){
+    {
+        fireStruct[i] = (int *) malloc(sizeof(int) *elem);
+    }
+
+    while (1)
+    {
         loadFireStruct(fireStruct,elem);
         creatFireSource(fireStruct,elem);
         calculeteFirePropagation(fireStruct,elem);
@@ -150,5 +168,8 @@ int main(int argc, char *argv[]){
         prinrtMat(fireStruct,elem);
         sleep(1);
     }
+
+    //REMEMBER CUDAFREE cudaFree();
+
     return 0;
 }
