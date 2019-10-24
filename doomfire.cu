@@ -108,7 +108,7 @@ __global__ void calculeteFirePropagation(int** mat,int elem)
     {
         for (int j = 0; j < elem; j++)
         {
-            updateFireIntensityPerPixelSimple<<<1, 1>>>(mat,elem ,i, j);
+            updateFireIntensityPerPixelSimple(mat,elem ,i, j);
         }
     }
 }
