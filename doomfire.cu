@@ -21,7 +21,7 @@ void prinrtMat(int** mat,int elem)
     }
 }
 
-void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY)
+__global__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY)
 {
     int belowPosX = posX;
     int decay = rand() % 3;
@@ -108,7 +108,7 @@ __global__ void calculeteFirePropagation(int** mat,int elem)
     {
         for (int j = 0; j < elem; j++)
         {
-            updateFireIntensityPerPixelSimple(mat,elem ,i, j);
+            updateFireIntensityPerPixelSimple<<<1, 1>>>(mat,elem ,i, j);
         }
     }
 }
