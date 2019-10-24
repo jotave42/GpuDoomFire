@@ -157,18 +157,23 @@ int main(int argc, char *argv[])
     int * fireStruct;
     cudaMallocManaged (&fireStruct, size);
     
+    loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
+    cudaDeviceSynchronize();
 
-    loadFireStruct(fireStruct,elem);
-    creatFireSource(fireStruct,elem);
+    creatFireSource<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
+    cudaDeviceSynchronize();
+
     while (1)
     {
-        calculeteFirePropagation(fireStruct,elem);
+        calculeteFirePropagation<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
+        cudaDeviceSynchronize();
+
         printf("=================\n");
         prinrtMat(fireStruct,elem);
         sleep(1);
     }
+
     cudaFree(fireStruct);
-    //REMEMBER CUDAFREE cudaFree();
 
     return 0;
 }
