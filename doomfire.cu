@@ -144,31 +144,30 @@ int main(int argc, char *argv[])
 
     cudaGetDevice(&deviceId);
     cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
-
+   
     size_t threadsPerBlock;
     size_t numberOfBlocks;
-
+    
     threadsPerBlock = 256;
     numberOfBlocks = 32 * numberOfSMs;
-
-    int elem = 40;
-    int ** fireStruct = (int *) malloc(sizeof(int) *elem *elem);
     
-    for (int i = 0; i < elem; i++)
-    {
-        fireStruct[i] = (int *) malloc(sizeof(int) *elem);
-    }
+    int elem = 40;
+    
+    int size = elem*elem*sizeof(int);
+    int * fireStruct;
+    cudaMallocManaged (&fireStruct, size);
+    
 
+    loadFireStruct(fireStruct,elem);
+    creatFireSource(fireStruct,elem);
     while (1)
     {
-        loadFireStruct(fireStruct,elem);
-        creatFireSource(fireStruct,elem);
         calculeteFirePropagation(fireStruct,elem);
         printf("=================\n");
         prinrtMat(fireStruct,elem);
         sleep(1);
     }
-
+    cudaFree(fireStruct);
     //REMEMBER CUDAFREE cudaFree();
 
     return 0;
