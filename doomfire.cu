@@ -159,10 +159,10 @@ int main(int argc, char *argv[])
     
     int elem = 40;
     
-    int size = elem*elem*sizeof(int);
+    int size = elem * elem * sizeof(int);
 
     int ** fireStruct;
-    cudaMallocManaged ((**void)&fireStruct, size);
+    cudaMallocManaged (&fireStruct, size);
     
     loadFireStruct<<<numberOfBlocks, threadsPerBlock>>>(fireStruct,elem);
     cudaDeviceSynchronize();
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 
         printf("=================\n");
         prinrtMat(fireStruct,elem);
-        sleep(1);
+        //sleep(1);
     }
 
     cudaFree(fireStruct);
