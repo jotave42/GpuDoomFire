@@ -37,7 +37,7 @@ __device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, i
     printf("res = %f\n",res);
     return;
 
-    if(posX < tam - 1)
+  /*  if(posX < tam - 1)
         belowPosX++;
     
     if(belowPosY < 0)
@@ -64,7 +64,7 @@ __device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, i
     int belowPixelFireIntensity = mat[belowPosX][belowPosY];
     int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
 
-    mat[posX][posY]=newFireIntensity;
+    mat[posX][posY]=newFireIntensity;*/
 }
 
 void updateFireIntensityPerPixel(int** mat,int elem ,int posX, int posY){
