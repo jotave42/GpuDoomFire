@@ -21,12 +21,19 @@ void prinrtMat(int** mat,int elem)
     }
 }
 
-__device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY)
+__device__ void updateFireIntensityPerPixelSimple(int** mat,int tam ,int posX, int posY,int index)
 {
     int belowPosX = posX;
-    int decay = rand() % 3;
-    int decayPosY = rand() % 5 + (-2); //random number between -3 and 3
+    //int decay = rand() % 3;
+    //int decayPosY = rand() % 5 + (-2); //random number between -3 and 3
     int belowPosY = posY + decayPosY;
+    
+    curandState state;
+
+    curand_init(seed, index, 0, &state);
+    float res = curand_uniform(&state);
+    printf("res = %f\n",res);
+    return;
 
     if(posX < tam - 1)
         belowPosX++;
@@ -108,7 +115,7 @@ __global__ void calculeteFirePropagation(int** mat,int elem)
     {
         for (int j = 0; j < elem; j++)
         {
-            updateFireIntensityPerPixelSimple(mat,elem ,i, j);
+            updateFireIntensityPerPixelSimple(mat,elem ,i, j, index_x);
         }
     }
 }
