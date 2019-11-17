@@ -12,7 +12,6 @@ typedef struct Color
 } Color_T;
 
 Color_T ** colors;
-int * fireStruct;
 
 Color_T * createColor(int red, int green, int blue)
 {
@@ -111,6 +110,38 @@ void updateFireIntensityPerPixel(int* fire, int line_length, int col_legth, int 
     fire[currentPixelIndex - decayIndex] = newFireIntensity;
 }
 
+__global__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, int col_legth, int currentPixelIndex)
+{
+    int totalOfPixels = line_length * col_legth;
+    int belowPixelIndex = currentPixelIndex + col_legth;
+
+    if(belowPixelIndex < totalOfPixels)
+    {
+        int decay = rand() % 3;
+        int decayIndex = rand() % 5 + (-2);
+        int belowPixelFireIntensity = fire[belowPixelIndex];
+        int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
+        fire[currentPixelIndex - decayIndex] = newFireIntensity;
+    }
+}
+
+__global__ void calculeteFirePropagationKernel(int* fire, int line_length, int col_legth, size_t threadsPerBlock, size_t numberOfBlocks)
+{
+    int index = threadIdx.x + blockIdx.x * blockDim.x;
+    int stride = blockDim.x * gridDim.x;
+
+    for (int i = index; i < n; i += stride) 
+    {
+        for (int j = index; j < n; j += stride)
+        {
+            int currentPixel = i * col_legth + j;
+            updateFireIntensityPerPixelKernel<<<threadsPerBlock, numberOfBlocks>>>(fire, line_length, col_legth, currentPixel);
+
+            cudaDeviceSynchronize();
+        }
+    }
+}
+
 void calculeteFirePropagation(int* fire, int line_length, int col_legth)
 {
     for (int line = 0; line < line_length; line++)
@@ -134,10 +165,16 @@ int main()
   int num_elem_line = 40;
   int num_elem_col = 40;
   int num_elem_total = num_elem_line * num_elem_col;
+  
+  size_t size = num_elem_total * sizeof(int);
+  int * fireStruct;
 
-  fireStruct = (int*) malloc(sizeof(int) * num_elem_total);
+  cudaMallocManaged(&fireStruct, size);
+
   loadFireStruct(fireStruct, num_elem_line, num_elem_col);
-  colors = createColorVector();
+  //colors = createColorVector();
+  
+  cudaMemPrefetchAsync(fireStruct, size, deviceId);
 
   size_t threadsPerBlock;
   size_t numberOfBlocks;
@@ -147,9 +184,14 @@ int main()
 
   while (1)
   {
-      calculeteFirePropagation(fireStruct, num_elem_line, num_elem_col);
+      calculeteFirePropagationKernel<<<numberOfBlocks, threadsPerBlock>>>(fireStruct, num_elem_line, num_elem_col, threadsPerBlock, numberOfBlocks);
+
+      cudaDeviceSynchronize();
+
       prinrtMat(fireStruct, num_elem_line, num_elem_col);
   }
+
+  cudaFree(fireStruct);
 }
 
 /*
