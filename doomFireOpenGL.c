@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <GL/glut.h>
+#include <cuda.h>
 
 typedef struct Color 
 { 
@@ -195,6 +196,23 @@ void keyboard(unsigned char key, int x, int y)
   }
 }
 
+int main()
+{
+  int deviceId;
+  int numberOfSMs;
+
+  cudaGetDevice(&deviceId);
+  cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+
+  size_t threadsPerBlock;
+  size_t numberOfBlocks;
+
+  threadsPerBlock = 256;
+  numberOfBlocks = 32 * numberOfSMs;
+
+}
+
+/*
 int main(int argc, char** argv)
 {
     int num_elem_line = 40;
@@ -220,3 +238,4 @@ int main(int argc, char** argv)
     glutKeyboardFunc(keyboard);
     glutMainLoop();
 } 
+*/
