@@ -123,6 +123,36 @@ void calculeteFirePropagation(int* fire, int line_length, int col_legth)
     }
 }
 
+int main()
+{
+  int deviceId;
+  int numberOfSMs;
+
+  cudaGetDevice(&deviceId);
+  cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
+  
+  int num_elem_line = 40;
+  int num_elem_col = 40;
+  int num_elem_total = num_elem_line * num_elem_col;
+
+  fireStruct = (int*) malloc(sizeof(int) * num_elem_total);
+  loadFireStruct(fireStruct, num_elem_line, num_elem_col);
+  colors = createColorVector();
+
+  size_t threadsPerBlock;
+  size_t numberOfBlocks;
+
+  threadsPerBlock = 256;
+  numberOfBlocks = 32 * numberOfSMs;
+
+  while (1)
+  {
+      calculeteFirePropagation(fireStruct, num_elem_line, num_elem_col);
+      prinrtMat(fireStruct, num_elem_line, num_elem_col);
+  }
+}
+
+/*
 int main(int argc, int *argv[])
 {
     int num_elem_line = 40;
@@ -140,3 +170,4 @@ int main(int argc, int *argv[])
     }    
     free(fireStruct);
 } 
+*/
