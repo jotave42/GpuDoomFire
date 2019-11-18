@@ -107,13 +107,16 @@ __device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, in
     int belowPixelIndex = currentPixelIndex + col_legth;
 
     if(belowPixelIndex < totalOfPixels)
-    {   curandState state;
+    {   float num_randf = 0.0f;  
+        long int num;
+        curandState state;
         curand_init(1234, currentPixelIndex,2, &state);
-    
-        long int num_randf = curand_uniform(&state);
-        int num = (int) (num_randf*100);
-        int decay = num %3;
-        int decayIndex = num % 5 + (-2);
+
+        num_randf = curand_uniform(&state);
+        num = (long int) (num_randf*100);
+        int decay =(int) (num %3);
+        printf("decay => %d\n",decay);
+        int decayIndex =(int) (num % 5 + (-2));
         int belowPixelFireIntensity = fire[belowPixelIndex];
         int newFireIntensity = belowPixelFireIntensity - decay >= 0 ? belowPixelFireIntensity - decay: 0;
         fire[currentPixelIndex - decayIndex] = newFireIntensity;
@@ -123,17 +126,15 @@ __device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, in
 __global__ void calculeteFirePropagationKernel(int* fire, int line_length, int col_legth, size_t threadsPerBlock, size_t numberOfBlocks, int n)
 {
     int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = blockDim.x * gridDim.x;
-
-    for (int i = index; i < n; i += stride) 
-    {
-        for (int j = index; j < n; j += stride)
-        {
-            int currentPixel = i * col_legth + j;
-            updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel);
-
-        }
+    if(n>index){
+        printf("index %d\n",index);
+        int stride = blockDim.x * gridDim.x;
+        printf("stride %d\n",stride);
+        int currentPixel = index;
+        printf("Pixel %d\n",currentPixel);
+        updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel);
     }
+   
 }
 
 int main()
@@ -144,8 +145,8 @@ int main()
   cudaGetDevice(&deviceId);
   cudaDeviceGetAttribute(&numberOfSMs, cudaDevAttrMultiProcessorCount, deviceId);
   
-  int num_elem_line = 40;
-  int num_elem_col = 40;
+  int num_elem_line = 10;
+  int num_elem_col = 10;
   int num_elem_total = num_elem_line * num_elem_col;
   
   size_t size = num_elem_total * sizeof(int);
@@ -160,7 +161,7 @@ int main()
   size_t threadsPerBlock;
   size_t numberOfBlocks;
 
-  threadsPerBlock = 256;
+  threadsPerBlock = 32;
   numberOfBlocks = 32 * numberOfSMs;
   char ch;
   while (1)
