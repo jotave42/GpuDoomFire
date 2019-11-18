@@ -101,7 +101,7 @@ void prinrtMat(int* fire,int line_length, int col_legth){
 }
 
 
-__device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, int col_legth, int currentPixelIndex)
+__device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, int col_legth, int currentPixelIndex,unsigned int seed)
 {
     int totalOfPixels = line_length * col_legth;
     int belowPixelIndex = currentPixelIndex + col_legth;
@@ -110,11 +110,12 @@ __device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, in
     {   float num_randf = 0.0f;  
         long int num;
         curandState state;
-        curand_init(1234, currentPixelIndex,2, &state);
+        curand_init(seed, currentPixelIndex,2, &state);
 
         num_randf = curand_uniform(&state);
         num = (long int) (num_randf*100);
         int decay =(int) (num %3);
+        decay = decay>0 ? decay : 1; 
         printf("decay => %d\n",decay);
         int decayIndex =(int) (num % 5 + (-2));
         int belowPixelFireIntensity = fire[belowPixelIndex];
@@ -123,7 +124,7 @@ __device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, in
     }
 }
 
-__global__ void calculeteFirePropagationKernel(int* fire, int line_length, int col_legth, size_t threadsPerBlock, size_t numberOfBlocks, int n)
+__global__ void calculeteFirePropagationKernel(int* fire, int line_length, int col_legth, size_t threadsPerBlock, size_t numberOfBlocks, int n,unsigned int seed)
 {
     int index = threadIdx.x + blockIdx.x * blockDim.x;
     if(n>index){
@@ -132,7 +133,7 @@ __global__ void calculeteFirePropagationKernel(int* fire, int line_length, int c
         printf("stride %d\n",stride);
         int currentPixel = index;
         printf("Pixel %d\n",currentPixel);
-        updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel);
+        updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel,seed);
     }
    
 }
@@ -166,7 +167,7 @@ int main()
   char ch;
   while (1)
   {
-      calculeteFirePropagationKernel<<<numberOfBlocks, threadsPerBlock>>>(fireStruct, num_elem_line, num_elem_col, threadsPerBlock, numberOfBlocks,num_elem_total);
+      calculeteFirePropagationKernel<<<numberOfBlocks, threadsPerBlock>>>(fireStruct, num_elem_line, num_elem_col, threadsPerBlock, numberOfBlocks,num_elem_total,time(0));
 
       cudaDeviceSynchronize();
 
