@@ -132,7 +132,6 @@ __global__ void calculeteFirePropagationKernel(int* fire, int line_length, int c
             int currentPixel = i * col_legth + j;
             updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel);
 
-            cudaDeviceSynchronize();
         }
     }
 }
