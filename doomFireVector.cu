@@ -101,7 +101,7 @@ void prinrtMat(int* fire,int line_length, int col_legth){
 }
 
 
-__global__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, int col_legth, int currentPixelIndex)
+__device__ void updateFireIntensityPerPixelKernel(int* fire, int line_length, int col_legth, int currentPixelIndex)
 {
     int totalOfPixels = line_length * col_legth;
     int belowPixelIndex = currentPixelIndex + col_legth;
@@ -130,7 +130,7 @@ __global__ void calculeteFirePropagationKernel(int* fire, int line_length, int c
         for (int j = index; j < n; j += stride)
         {
             int currentPixel = i * col_legth + j;
-            updateFireIntensityPerPixelKernel<<<threadsPerBlock, numberOfBlocks>>>(fire, line_length, col_legth, currentPixel);
+            updateFireIntensityPerPixelKernel(fire, line_length, col_legth, currentPixel);
 
             cudaDeviceSynchronize();
         }
