@@ -89,7 +89,7 @@ void prinrtMat(int* fire,int line_length, int col_legth){
 }
 void updateFireIntensityPerPixel(int* fire,int line_length, int col_legth, int currentPixelIndex){
     int totalOfPixels = line_length * col_legth;
-    int belowPixelIndex = currentPixelIndex + col_legth;
+    int belowPixelIndex = currentPixelIndex +col_legth;
     if(belowPixelIndex >= totalOfPixels){
         return;
     }
