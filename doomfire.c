@@ -133,12 +133,12 @@ int loadFireStruct(int** mat,int elem){
 /*
 int main(int argc, char *argv[]){
     int elem = 40;
-    int ** fireStruct =(int *) malloc(sizeof(int)*elem*elem);
+    int ** fireStruct =(int *) malloc(sizeof(int)*elem);
     for (int i = 0; i < elem; i++)
         fireStruct[i] = (int *) malloc(sizeof(int)*elem);
+    loadFireStruct(fireStruct,elem);
+    creatFireSource(fireStruct,elem);
     while (1){
-        loadFireStruct(fireStruct,elem);
-        creatFireSource(fireStruct,elem);
         calculeteFirePropagation(fireStruct,elem);
         printf("=================\n");
         prinrtMat(fireStruct,elem);
